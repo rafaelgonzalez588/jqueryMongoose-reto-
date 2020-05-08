@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Formulario de Registro Jquery & Mongoose</title>
+
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="container">
+    <div id="form" class="col-sm-6 col-sm-offset-3">
+      <h1>Formulario de Registro</h1>
+      <form action="/new" method="POST">
+        <div class="form-group">
+          <label class="control-label" for="user-github">Usuario Github:</label>
+          <input type="text" name="user" class="form-control input-lg" id="user-github" placeholder="Ingresa un usuario">
+          <p class="help-block"></p>
+        </div>
+        <div class="form-group">
+          <label class="control-label" for="email">Correo:</label>
+          <input type="email" name="email" class="form-control input-lg" id="passcode" placeholder="Ingresa un correo">
+          <p class="help-block"></p>
+        </div>
+        <div class="checkbox terms-checkbox">
+          <label>
+            <input type="checkbox" name="terms" id="terms"> Acepto los términos y condiciones
+          </label>
+        </div>
+        <div class="action text-right">
+          <button type="submit" class="btn btn-primary btn-block btn-lg">Registrarse</button>
+        </div>
+      </form>
+    </div>
+    <div id="list" class="row hidden">
+        <div class="col-sm-10 col-sm-offset-1">
+          <h1>Lista de Usuarios</h1>
+
+          <table class="table bordered-table table-striped">
+            <thead>
+              <tr>
+                <th class="text-center">Usuario Github</th>
+                <th class="text-center">Correo</th>
+              </tr>
+            </thead>
+            <tbody>
+            </tbody>
+          </table>
+        </div>
+      </div>
+  </div>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
+  <script src="app.js"></script>
+  <script>
+    $('form').on('submit', function(e) {
+      e.preventDefault();
+      const data = $('form').serializeArray();
+      const objectVal = {}
+      data.map((val) => {
+        objectVal[val.name] = val.value
+      })
+      $.ajax({
+        type: "POST",
+        url: '/new',
+        data: objectVal
+      }).done(function(data) {
+        if (data === 'Guardado') {
+          $('#form').addClass('hidden');
+          $('#list').removeClass('hidden');
+          $.get( "/registros", function( data ) {
+            data.map((value) => {
+              $('#list tbody').prepend(`<tr><td>${value.user}</td><td>${value.email}</td></tr>`)
+            })
+          });
+        }
+      });
+    })
+  </script>
+</body>
+</html>
